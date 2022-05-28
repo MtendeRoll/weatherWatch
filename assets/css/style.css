@@ -27,3 +27,7 @@ header h1 {
   font-size: 40px;
   color: white;
 }
+
+.search-btn {
+  margin: 10px;
+}
