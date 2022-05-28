@@ -1,0 +1,29 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Open Sans", sans-serif;
+  color: black;
+}
+
+header {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  background: rgb(2, 0, 36);
+  background: linear-gradient(248deg, indigo 0%, navy 35%, blue 100%);
+  margin-bottom: 20px;
+}
+header h1 {
+  padding: 10px;
+  font-size: 40px;
+  color: white;
+}
