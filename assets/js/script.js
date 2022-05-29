@@ -1,10 +1,9 @@
-var apiKey = "5694cfe0f32c250ffefcb4867d8815e7";
-var searchInputEl = document.querySelector("#search-city");
-var searchBtnEl = document.querySelector("#search-btn");
-var historyEl = document.querySelector(".history");
-var moment = moment().format("LL");
-var fiveDayForecastEl = document.querySelector("#five-days");
-var currentWeather = document.querySelector("today");
+var apiKey = "6fde8c5e7458f62b1a5410355e4aac5f";
+var searchInputEl = document.querySelector("#city-search");
+var weatherFormEl = document.querySelector("#city-form");
+var weatherInfoEl = document.querySelector("#weather-div");
+var cityHistoryEl = document.querySelector("#listed-cities");
+var cityButtonEl;
 
 //search input function
 var searchSubmitHandler = function (event) {
@@ -19,19 +18,18 @@ var searchSubmitHandler = function (event) {
     alert("Please enter a city name.");
   }
 };
-searchInputEl.addEventListener("click", searchSubmitHandler);
+weatherFormEl.addEventListener("click", searchSubmitHandler);
 
 //fetching weather API
 var cityData = function (cityName) {
-  var weatherApi = "https://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + apiKey;
-
+  var weatherApi = "https://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&limit=1&units=metric&appid=" + apiKey;
   fetch(weatherApi)
     .then(function (response) {
       if (response.ok) {
         response.json().then(function (data) {
           var lat = data[0].lat;
-          var long = data[0].long;
-          getWeather(lat, long, cityName);
+          var long = data[0].lon;
+          weatherCoordinates(lat, long, cityName);
         });
       } else {
         alert("No City was found");
@@ -43,8 +41,8 @@ var cityData = function (cityName) {
 };
 
 //fetching weather API by cordinates
-var getWeather = function (lat, long, cityName) {
-  var weatherApi = "https://api.openweathermap.org/data/2.5/onecall?lat=" + latitude + "&lon=" + longitude + "&exclude=minutely,hourly,alerts&units=imperial&appid=be7c6540adf0957dc646903e1ce56c09";
+var weatherCoordinates = function (lat, long, cityName) {
+  var weatherApi = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + long + "&exclude=minutely,hourly,alerts&units=metric&appid=" + apiKey;
   fetch(weatherApi)
     .then(function (response) {
       if (response.ok) {
@@ -58,7 +56,7 @@ var getWeather = function (lat, long, cityName) {
           displayWeather(cityName, icon, temp, hum, wind, uv, daily);
         });
       } else {
-        alert("Error: City Not Found");
+        alert("Error: City information Not Found");
       }
     })
     .catch(function (error) {
@@ -66,31 +64,118 @@ var getWeather = function (lat, long, cityName) {
     });
 };
 
-var weatherCoordinates = function (lat, long) {
-  var weatherApi = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + long + "&exclude=minutely,hourly,alerts&units=imperial&appid=" + apiKey;
-  fetch(weatherApi)
-    .then(function (response) {
-      if (response.ok) {
-        response.json().then(function (data) {
-          displayWeather(cityName, icon, temp, hum, wind, uv, daily);
-        });
-      } else {
-        alert("Error: City Not Found");
-      }
-    })
-    .catch(function (error) {
-      alert("Unable to connect to Weather Dashboard");
-    });
+var displayWeather = function (cityName, icon, temp, hum, wind, uv, daily) {
+  weatherInfoEl.innerHTML = " ";
+
+  cityButtonRepeatEl = document.getElementById(cityName);
+  if (!cityButtonRepeatEl) {
+    cityButtonEl = document.createElement("button");
+    cityButtonEl.setAttribute("class", "city-btn");
+    cityButtonEl.setAttribute("id", cityName);
+    cityButtonEl.textContent = cityName;
+    cityHistoryEl.appendChild(cityButtonEl);
+    saveSearch(cityName);
+  }
+
+  var headingDivEl = document.createElement("div");
+  headingDivEl.setAttribute("class", "card forecast col-12");
+  weatherInfoEl.append(headingDivEl);
+
+  var weatherHeading = document.createElement("h3");
+  weatherHeading.setAttribute("class", "card-header card-head-back today-date");
+  weatherHeading.innerHTML = cityName + " (" + moment().format("LL") + ") " + "<img src=http://openweathermap.org/img/wn/" + icon + "@2x.png>";
+  headingDivEl.append(weatherHeading);
+
+  var weatherInfoDivEl = document.createElement("div");
+  weatherInfoDivEl.setAttribute("class", "card-body");
+  headingDivEl.appendChild(weatherInfoDivEl);
+
+  var temp = Math.floor(temp);
+  var infoArray = ["Temp: " + temp + "°C", "Wind: " + wind + " MPH", "Humidity: " + hum + " %"];
+  for (var i = 0; i < infoArray.length; i++) {
+    var infoItem = document.createElement("p");
+    infoItem.setAttribute("class", "card-text");
+    infoItem.innerHTML = infoArray[i];
+    weatherInfoDivEl.appendChild(infoItem);
+  }
+  var infoItemUV = document.createElement("p");
+  infoItemUV.innerHTML = "UV Index: " + "<span>" + uv + "</span>";
+  infoItemUV.setAttribute("class", "card-text");
+  weatherInfoDivEl.appendChild(infoItemUV);
+  var spanUV = document.querySelector("span");
+
+  if (uv < 3) {
+    spanUV.setAttribute("id", "low-uv");
+  } else if (uv >= "3" && uv <= "5") {
+    spanUV.setAttribute("id", "mod-uv");
+  } else if (uv >= "6" && uv <= "7") {
+    spanUV.setAttribute("id", "high-uv");
+  } else if (uv >= "8" && uv <= "10") {
+    spanUV.setAttribute("id", "vhigh-uv");
+  } else if (uv >= "11") {
+    spanUV.setAttribute("id", "extreme-uv");
+  }
+
+  var fiveDayHeaderDivEl = document.createElement("div");
+  fiveDayHeaderDivEl.setAttribute("class", "col-12 mt-20");
+  fiveDayHeaderDivEl.innerHTML = "<h4 class='five-day-header'>Five-Day Forecast:</h4>";
+  weatherInfoEl.appendChild(fiveDayHeaderDivEl);
+
+  for (var i = 1; i < daily.length - 2; i++) {
+    var cardDivEl = document.createElement("div");
+    cardDivEl.setAttribute("class", "card col-sm-12 col-lg-2 mb-2");
+    weatherInfoEl.appendChild(cardDivEl);
+
+    var forecastDate = document.createElement("h4");
+    forecastDate.setAttribute("class", "card-header card-head-back forecast-head px-auto");
+    forecastDate.textContent = moment().add([i], "d").format("LL");
+    cardDivEl.append(forecastDate);
+
+    var forecastInfoDiv = document.createElement("div");
+    forecastInfoDiv.setAttribute("class", "card-body");
+    cardDivEl.appendChild(forecastInfoDiv);
+
+    var iconEl = daily[i].weather[0].icon;
+    var forecastImg = document.createElement("div");
+    forecastImg.innerHTML = "<img src=http://openweathermap.org/img/wn/" + iconEl + "@2x.png>";
+    forecastInfoDiv.append(forecastImg);
+
+    var tempEl = Math.floor(daily[1].temp.day);
+    var windEl = daily[i].wind_speed;
+    var humEl = daily[i].humidity;
+    var infoArrayForecast = ["Temp: " + tempEl + "°C", "Wind: " + windEl + " MPH", "Humidity: " + humEl + " %"];
+    for (var j = 0; j < infoArrayForecast.length; j++) {
+      var infoItemForecast = document.createElement("p");
+      infoItemForecast.setAttribute("class", "card-text");
+      infoItemForecast.innerHTML = infoArrayForecast[j];
+      forecastInfoDiv.appendChild(infoItemForecast);
+    }
+  }
 };
 
-var displayWeather = function (cityName, icon, temp, hum, wind, uv, daily) {};
-
+// function that saves search history
 function saveSearch(cityName) {
   var cityArray = JSON.parse(window.localStorage.getItem("cityArray")) || [];
-  if (cityArray.indexOf(cityName) !== -1) {
-    return;
+  if (!cityArray.includes(cityName)) {
+    cityArray.push(cityName);
   }
-  cityArray.push(cityName);
-  localStorage.setItem("city", JSON.stringify(cityArray));
-  getRecentSearch();
+  localStorage.setItem("cityArray", JSON.stringify(cityArray));
 }
+
+//function that gets search history
+var getSearchHistory = function () {
+  cityHistoryEl.innerHTML = "";
+  var savedCities = JSON.parse(localStorage.getItem("cityArray")) || [];
+  for (var i = 0; i < savedCities.length; i++) {
+    cityData(savedCities[i]);
+  }
+};
+getSearchHistory();
+
+//function to get information on the button cityName
+$("body").on("click", ".city-btn", function () {
+  console.log("click!");
+  var buttonText = $(this).text();
+  console.log(buttonText);
+  cityData(buttonText);
+});

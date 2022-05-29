@@ -31,3 +31,72 @@ header h1 {
 .search-btn-style {
   margin: 10px;
 }
+
+.divrow {
+  width: 90vw;
+}
+
+.card-head-back {
+  background-color: rgba(0, 212, 255, 0.5);
+}
+
+.icon-image {
+  height: 50px;
+  width: 50px;
+  margin: 0 auto;
+}
+
+.five-day-header {
+  color: white;
+  margin-top: 10px;
+}
+
+.forecast-head {
+  font-size: 15px;
+}
+
+.city-btn {
+  width: 80%;
+  border-radius: 5px;
+  margin-left: 10px;
+}
+
+#search-header {
+  font-size: 25px;
+}
+
+#city-list {
+  border-top: 2px solid white;
+  margin-top: 10px;
+}
+
+#search-btn,
+.city-btn {
+  margin-top: 10px;
+  background-color: rgba(0, 212, 255, 1);
+}
+
+#low-uv {
+  background: rgba(63, 195, 128, 1);
+  border-radius: 5px;
+}
+
+#mod-uv {
+  background: rgba(9, 9, 121, 0.7);
+  border-radius: 3px;
+}
+
+#high-uv {
+  background: rgba(255, 255, 159, 1);
+  border-radius: 3px;
+}
+
+#vhigh-uv {
+  background: rgba(250, 190, 88, 1);
+  border-radius: 3px;
+}
+
+#extreme-uv {
+  background: rgba(242, 38, 19, 0.7);
+  border-radius: 3px;
+}
