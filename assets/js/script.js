@@ -91,7 +91,8 @@ var displayWeather = function (cityName, icon, temp, hum, wind, uv, daily) {
   headingDivEl.appendChild(weatherInfoDivEl);
 
   var temp = Math.floor(temp);
-  var infoArray = ["Temp: " + temp + "°C", "Wind: " + wind + " MPH", "Humidity: " + hum + " %"];
+  var wind = Math.floor(parseInt(wind) * 1.609);
+  var infoArray = ["Temp: " + temp + "°C", "Wind: " + wind + " KM/H ", "Humidity: " + hum + " %"];
   for (var i = 0; i < infoArray.length; i++) {
     var infoItem = document.createElement("p");
     infoItem.setAttribute("class", "card-text");
@@ -105,15 +106,15 @@ var displayWeather = function (cityName, icon, temp, hum, wind, uv, daily) {
   var spanUV = document.querySelector("span");
 
   if (uv < 3) {
-    spanUV.setAttribute("id", "low-uv");
+    spanUV.setAttribute("id", "low");
   } else if (uv >= "3" && uv <= "5") {
-    spanUV.setAttribute("id", "mod-uv");
+    spanUV.setAttribute("id", "moderate");
   } else if (uv >= "6" && uv <= "7") {
-    spanUV.setAttribute("id", "high-uv");
+    spanUV.setAttribute("id", "high");
   } else if (uv >= "8" && uv <= "10") {
-    spanUV.setAttribute("id", "vhigh-uv");
+    spanUV.setAttribute("id", "veryHigh");
   } else if (uv >= "11") {
-    spanUV.setAttribute("id", "extreme-uv");
+    spanUV.setAttribute("id", "extreme");
   }
 
   var fiveDayHeaderDivEl = document.createElement("div");
@@ -141,9 +142,9 @@ var displayWeather = function (cityName, icon, temp, hum, wind, uv, daily) {
     forecastInfoDiv.append(forecastImg);
 
     var tempEl = Math.floor(daily[1].temp.day);
-    var windEl = daily[i].wind_speed;
+    var windEl = Math.floor(parseInt(daily[i].wind_speed) * 1.609);
     var humEl = daily[i].humidity;
-    var infoArrayForecast = ["Temp: " + tempEl + "°C", "Wind: " + windEl + " MPH", "Humidity: " + humEl + " %"];
+    var infoArrayForecast = ["Temp: " + tempEl + "°C", "Wind: " + windEl + " KM/H ", "Humidity: " + humEl + " %"];
     for (var j = 0; j < infoArrayForecast.length; j++) {
       var infoItemForecast = document.createElement("p");
       infoItemForecast.setAttribute("class", "card-text");

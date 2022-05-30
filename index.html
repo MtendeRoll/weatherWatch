@@ -21,12 +21,15 @@
     <main class="container-fluid">
       <div class="row">
         <div class="col-lg-3 bg-light">
-          <h5 class="mt-1">Search for a City:</h5>
+          <h5 class="h2 mt-1">Search for a City:</h5>
           <div id="city-form" class="form-inline form-group">
             <form class="search-btn-style">
               <input name="city" id="city-search" type="text" autofocus="true" class="form-control" placeholder="Graham" />
-              <button type="submit" class="btn w-xs-75 w-sm-25 w-lg-75 mx-sm-0 mx-m-10 btn-lg" id="search-button">Search</button>
+              <button type="submit" class="btn btn-secondary" id="search-button">Search</button>
             </form>
+            <div class="recent">
+              <p class="h2">Recent Searches</p>
+            </div>
           </div>
           <div class="d-flex flex-column align-items-center justify-content-center" id="listed-cities"></div>
         </div>
